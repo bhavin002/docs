@@ -227,7 +227,7 @@
           },
           "sentiment": {
             "type": "number",
-            "description": "Sentiment score"
+            "description": "Sentiment score (1: positive, 2: neutral, 3: negative)"
           },
           "success": {
             "type": "boolean",
