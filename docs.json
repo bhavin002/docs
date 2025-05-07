@@ -89,7 +89,11 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://app.hobbo.ai/"
+      "href": "https://app.hobbo.ai/",
+      "style":{
+        "background": "#4F46E5",
+        "color": "white"
+      }
     }
   },
   "footer": {
