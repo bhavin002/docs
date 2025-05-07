@@ -10,63 +10,24 @@
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.hobbo.ai"
     }
   ],
   "security": [
     {
-      "bearerAuth": []
+      "ApiKeyAuth": []
     }
   ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/public/v1/email-generator": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "description": "Generate professional email content automatically for welcome emails, notifications, and communications.",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "description": "Email generation parameters",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/EmailGeneratorRequest"
               }
             }
           },
@@ -74,21 +35,41 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Email content generated successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/EmailGeneratorResponse"
+                },
+                "examples": {
+                  "validationError": {
+                    "value": {
+                      "status": 200,
+                      "data": {},
+                      "success": false,
+                      "message": "<string>"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Validation error or unexpected error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "validationError": {
+                    "value": {
+                      "status": 400,
+                      "data": {},
+                      "success": false,
+                      "message": "<string>"
+                    }
+                  }
                 }
               }
             }
@@ -96,57 +77,60 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
+    "/public/v1/sentiment": {
+      "post": {
+        "description": "Analyze text sentiment (positive, negative, or neutral) for feedback and social monitoring.",
+        "requestBody": {
+          "description": "Sentiment analysis parameters",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SentimentRequest"
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Sentiment analyzed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SentimentResponse"
+                },
+                "examples": {
+                  "validationError": {
+                    "value": {
+                      "status": 200,
+                      "data": {},
+                      "success": false,
+                      "message": "<string>"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Validation error or unexpected error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "validationError": {
+                    "value": {
+                      "status": 400,
+                      "data": {},
+                      "success": false,
+                      "message": "<string>"
+                    }
+                  }
                 }
               }
             }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
           }
         }
       }
@@ -154,63 +138,113 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "EmailGeneratorRequest": {
         "type": "object",
+        "required": ["type", "product"],
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "type": {
+            "type": "string",
+            "description": "The type of email"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "product": {
+            "type": "string",
+            "description": "The product associated with the email"
+          },
+          "meta_data": {
+            "type": "object",
+            "description": "An object containing dynamic meta_data"
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "EmailGeneratorResponse": {
         "type": "object",
         "properties": {
-          "error": {
+          "status": {
             "type": "integer",
-            "format": "int32"
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": "string",
+                "description": "Generated email subject"
+              },
+              "body": {
+                "type": "string",
+                "description": "Generated email body content"
+              }
+            }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if the operation was successful"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Response message"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "description": "Empty object or additional error data"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Indicates operation failed",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message describing what went wrong"
+          }
+        }
+      },
+      "SentimentRequest": {
+        "type": "object",
+        "required": ["sentence"],
+        "properties": {
+          "sentence": {
+            "type": "string",
+            "description": "The text to analyze for sentiment"
+          }
+        }
+      },
+      "SentimentResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code"
+          },
+          "sentiment": {
+            "type": "number",
+            "description": "Sentiment score"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if the operation was successful"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message"
           }
         }
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
       }
     }
   }
