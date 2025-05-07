@@ -5,3 +5,8 @@
 footer{
     display: none !important;
 }
+
+.bg-primary-dark{
+    background-color: white !important;
+    color: black !important;
+}
