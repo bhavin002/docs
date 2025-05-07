@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Mint Starter Kit",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#111827",
+    "light": "#f3f4f6",
+    "dark": "#f3f4f6"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -89,7 +89,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://app.hobbo.ai/"
     }
   },
   "footer": {
